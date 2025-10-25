@@ -48,10 +48,8 @@ export function DashboardPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
-                  <Sprout className="w-6 h-6 text-white" />
-                </div>
+              <div className="flex items-center gap-3">
+                <img src="/logo.png" alt="AgroFiles Logo" className="w-12 h-12 object-contain" />
                 <h1 className="text-xl font-bold text-gray-900">AgroFiles</h1>
               </div>
 
@@ -116,7 +114,7 @@ export function DashboardPage() {
                     <span className="font-medium">2.4 GB / 10 GB</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-primary-500 h-2 rounded-full" style={{ width: '24%' }} />
+                    <div className="bg-[rgb(var(--primary-500))] h-2 rounded-full" style={{ width: '24%' }} />
                   </div>
                 </div>
               </CardContent>

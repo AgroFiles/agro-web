@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import {
-  Sprout,
   FileText,
   Share2,
   Search,
@@ -19,18 +18,15 @@ export function LandingPage() {
       <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
-                <Sprout className="w-6 h-6 text-white" />
-              </div>
+            <div className="flex items-center gap-3">
+              <img src="/logo.png" alt="AgroFiles Logo" className="w-12 h-12 object-contain" />
               <h1 className="text-xl font-bold text-gray-900">AgroFiles</h1>
             </div>
             <div className="flex items-center gap-3">
               <Link to="/sign-in">
-                <Button variant="ghost">Iniciar Sesión</Button>
-              </Link>
-              <Link to="/sign-up">
-                <Button>Comenzar</Button>
+                <Button variant="outline" className="border-[rgb(var(--primary-500))] text-[rgb(var(--primary-600))] hover:bg-[rgb(var(--primary-50))] hover:border-[rgb(var(--primary-600))]">
+                  Iniciar Sesión
+                </Button>
               </Link>
             </div>
           </div>
@@ -38,10 +34,10 @@ export function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 pt-32">
         <div className="text-center max-w-3xl mx-auto">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-primary-500 rounded-2xl mb-6">
-            <Sprout className="w-12 h-12 text-white" />
+          <div className="inline-flex items-center justify-center mb-6">
+            <img src="/logo.png" alt="AgroFiles Logo" className="w-32 h-32 object-contain" />
           </div>
           <h2 className="text-5xl font-bold text-gray-900 mb-6">
             Tu Registro Histórico Agropecuario
@@ -50,11 +46,10 @@ export function LandingPage() {
             Gestiona, organiza y comparte tus archivos agropecuarios de forma moderna y eficiente.
             La solución digital para productores del campo argentino.
           </p>
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center realtiva z-0">
             <Link to="/sign-up">
-              <Button size="lg" className="gap-2">
+              <Button className="gap-2 shadow-lg">
                 Comenzar Gratis
-                <ArrowRight className="w-5 h-5" />
               </Button>
             </Link>
           </div>
@@ -188,13 +183,11 @@ export function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
-                <Sprout className="w-5 h-5 text-white" />
-              </div>
+              <img src="/logo.png" alt="AgroFiles Logo" className="w-10 h-10 object-contain" />
               <span className="font-semibold text-gray-900">AgroFiles</span>
             </div>
             <p className="text-sm text-gray-500">
-              © 2024 AgroFiles. Desarrollado para el campo argentino.
+              © 2025 AgroFiles. Desarrollado para el campo argentino.
             </p>
           </div>
         </div>

@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuthStore } from '@/store/auth-store'
-import { Sprout } from 'lucide-react'
 
 const signUpSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -50,8 +49,8 @@ export function SignUpPage() {
       <div className="w-full max-w-md">
         {/* Logo y título */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-500 rounded-2xl mb-4">
-            <Sprout className="w-10 h-10 text-white" />
+          <div className="inline-flex items-center justify-center mb-4">
+            <img src="/logo.png" alt="AgroFiles Logo" className="w-24 h-24 object-contain" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">AgroFiles</h1>
           <p className="text-gray-600">Tu registro histórico agropecuario</p>
@@ -132,7 +131,7 @@ export function SignUpPage() {
           <CardFooter className="flex-col space-y-2">
             <div className="text-sm text-center text-gray-600">
               ¿Ya tienes una cuenta?{' '}
-              <Link to="/sign-in" className="text-primary-500 hover:text-primary-600 font-medium">
+              <Link to="/sign-in" className="text-[rgb(var(--primary-500))] hover:text-[rgb(var(--primary-600))] font-medium">
                 Inicia sesión
               </Link>
             </div>
