@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { LandingPage } from '@/pages/landing'
 import { SignInPage } from '@/pages/sign-in'
 import { SignUpPage } from '@/pages/sign-up'
 import { DashboardPage } from '@/pages/dashboard'
@@ -12,13 +13,8 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Ruta raíz - redirige según autenticación */}
-        <Route
-          path="/"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <Navigate to="/sign-in" replace />
-          }
-        />
+        {/* Ruta raíz - Landing page pública */}
+        <Route path="/" element={<LandingPage />} />
 
         {/* Rutas públicas - redirigen al dashboard si ya está autenticado */}
         <Route
