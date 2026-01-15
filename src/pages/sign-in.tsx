@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,7 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuthStore } from '@/store/auth-store'
-import { Sprout } from 'lucide-react'
+import { toast } from 'sonner'
 
 const signInSchema = z.object({
   email: z.string().email('Email inválido'),
@@ -20,7 +19,6 @@ type SignInForm = z.infer<typeof signInSchema>
 export function SignInPage() {
   const navigate = useNavigate()
   const login = useAuthStore((state) => state.login)
-  const [error, setError] = useState('')
 
   const {
     register,
@@ -32,11 +30,12 @@ export function SignInPage() {
 
   const onSubmit = async (data: SignInForm) => {
     try {
-      setError('')
       await login(data.email, data.password)
+      toast.success('Sesión iniciada correctamente')
       navigate('/dashboard')
-    } catch (err) {
-      setError('Error al iniciar sesión. Por favor, intenta de nuevo.')
+    } catch (err: any) {
+      const errorMessage = err?.response?.data?.message || 'Error al iniciar sesión. Por favor, intenta de nuevo.'
+      toast.error(errorMessage)
     }
   }
 
@@ -86,12 +85,6 @@ export function SignInPage() {
                   <p className="text-sm text-red-500">{errors.password.message}</p>
                 )}
               </div>
-
-              {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                  <p className="text-sm text-red-600">{error}</p>
-                </div>
-              )}
 
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? 'Iniciando sesión...' : 'Iniciar Sesión'}

@@ -6,12 +6,14 @@ import { DashboardPage } from '@/pages/dashboard'
 import { SearchPage } from '@/pages/search'
 import { ProtectedRoute } from '@/components/protected-route'
 import { useAuthStore } from '@/store/auth-store'
+import { Toaster } from '@/components/ui/sonner'
 
 function App() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated)
 
   return (
     <BrowserRouter>
+      <Toaster />
       <Routes>
         {/* Ruta raíz - Landing page pública */}
         <Route path="/" element={<LandingPage />} />

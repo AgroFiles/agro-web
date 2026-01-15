@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -8,6 +7,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { useAuthStore } from '@/store/auth-store'
+import { toast } from 'sonner'
 
 const signUpSchema = z.object({
   name: z.string().min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -24,7 +24,6 @@ type SignUpForm = z.infer<typeof signUpSchema>
 export function SignUpPage() {
   const navigate = useNavigate()
   const signup = useAuthStore((state) => state.signup)
-  const [error, setError] = useState('')
 
   const {
     register,
@@ -36,11 +35,12 @@ export function SignUpPage() {
 
   const onSubmit = async (data: SignUpForm) => {
     try {
-      setError('')
       await signup(data.email, data.password, data.name)
+      toast.success('Cuenta creada exitosamente')
       navigate('/dashboard')
-    } catch (err) {
-      setError('Error al crear la cuenta. Por favor, intenta de nuevo.')
+    } catch (err: any) {
+      const errorMessage = err?.response?.data?.message || 'Error al crear la cuenta. Por favor, intenta de nuevo.'
+      toast.error(errorMessage)
     }
   }
 
@@ -116,12 +116,6 @@ export function SignUpPage() {
                   <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
                 )}
               </div>
-
-              {error && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                  <p className="text-sm text-red-600">{error}</p>
-                </div>
-              )}
 
               <Button type="submit" className="w-full" disabled={isSubmitting}>
                 {isSubmitting ? 'Creando cuenta...' : 'Crear Cuenta'}

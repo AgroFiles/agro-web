@@ -1,5 +1,5 @@
 export interface User {
-  id: string
+  id: number
   email: string
   name: string
   createdAt: string
@@ -7,6 +7,7 @@ export interface User {
 
 export interface AuthState {
   user: User | null
+  token: string | null
   isAuthenticated: boolean
   isLoading: boolean
   login: (email: string, password: string) => Promise<void>
