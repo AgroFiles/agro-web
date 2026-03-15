@@ -3,6 +3,7 @@ import { toast } from 'sonner'
 import { listMisClientes, listDocumentosDeCliente } from '@/lib/cliente-api'
 import { uploadFileParaCliente } from '@/lib/file-api'
 import type { ClienteUploadOptions } from '@/lib/file-api'
+import { listEstablecimientosDeCliente } from '@/lib/establecimiento-api'
 
 export function useMisClientes() {
   return useQuery({
@@ -15,6 +16,14 @@ export function useDocumentosDeCliente(clienteId: number | null) {
   return useQuery({
     queryKey: ['documentos-cliente', clienteId],
     queryFn: () => listDocumentosDeCliente(clienteId!),
+    enabled: clienteId !== null,
+  })
+}
+
+export function useEstablecimientosDeCliente(clienteId: number | null) {
+  return useQuery({
+    queryKey: ['establecimientos-cliente', clienteId],
+    queryFn: () => listEstablecimientosDeCliente(clienteId!),
     enabled: clienteId !== null,
   })
 }

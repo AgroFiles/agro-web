@@ -5,8 +5,8 @@ export function useNotificaciones() {
   return useQuery({
     queryKey: ['notificaciones'],
     queryFn: listNotificaciones,
-    refetchInterval: 30_000, // poll every 30s
-    staleTime: 25_000,
+    refetchInterval: 30_000,
+    staleTime: 0,
   })
 }
 

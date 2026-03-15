@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/auth-store'
 import { Button } from '@/components/ui/button'
 import { NotificacionesBell } from '@/components/notificaciones-bell'
+import { queryClient } from '@/lib/query-client'
 import {
   Home,
   FileText,
@@ -41,6 +42,7 @@ export function AppLayout({ children }: AppLayoutProps) {
 
   const handleLogout = () => {
     logout()
+    queryClient.clear()
     navigate('/sign-in')
   }
 
@@ -86,7 +88,7 @@ export function AppLayout({ children }: AppLayoutProps) {
                   {user?.tipo === 'PRODUCTOR' ? 'Productor' : 'Prestador de Servicios'}
                 </p>
               </div>
-              {user?.tipo === 'PRODUCTOR' && <NotificacionesBell />}
+              <NotificacionesBell />
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="w-4 h-4 mr-2" />
                 Salir

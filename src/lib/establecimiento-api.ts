@@ -6,6 +6,11 @@ export async function listEstablecimientos(): Promise<Establecimiento[]> {
   return response.data
 }
 
+export async function listEstablecimientosDeCliente(propietarioId: number): Promise<Establecimiento[]> {
+  const response = await apiClient.get<Establecimiento[]>(`/api/v1/establecimientos?propietarioId=${propietarioId}`)
+  return response.data
+}
+
 export async function createEstablecimiento(nombre: string): Promise<Establecimiento> {
   const response = await apiClient.post<Establecimiento>('/api/v1/establecimientos', { nombre })
   return response.data
