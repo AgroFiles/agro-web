@@ -270,10 +270,12 @@ function ClientePanel({
           <h3 className="text-xl font-bold text-gray-900">{cliente.razonSocial}</h3>
           <p className="text-sm text-gray-500">{cliente.email}</p>
         </div>
-        <Button onClick={() => setUploadOpen(true)} size="sm">
-          <Upload className="w-4 h-4 mr-2" />
-          Subir documento
-        </Button>
+        {nivelPermiso !== 'READ' && (
+          <Button onClick={() => setUploadOpen(true)} size="sm">
+            <Upload className="w-4 h-4 mr-2" />
+            Subir documento
+          </Button>
+        )}
       </div>
 
       {sharedEstablecimientos.length > 0 && (
@@ -307,7 +309,7 @@ function ClientePanel({
         </div>
       )}
 
-      {uploadOpen && (
+      {uploadOpen && nivelPermiso !== 'READ' && (
         <UploadParaClienteDialog
           cliente={{ id: cliente.productorId, razonSocial: cliente.razonSocial }}
           sharedEstablecimientos={sharedEstablecimientos}

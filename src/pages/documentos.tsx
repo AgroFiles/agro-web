@@ -28,6 +28,8 @@ import {
   CalendarDays,
   X,
   History,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react'
 
 const SCAN_STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -173,6 +175,8 @@ export function DocumentosPage() {
   const [rubroFiltro, setRubroFiltro] = useState('')
   const [establecimientoFiltro, setEstablecimientoFiltro] = useState('')
   const [vista, setVista] = useState<'lista' | 'historial'>('lista')
+  const [pagina, setPagina] = useState(1)
+  const POR_PAGINA = 20
 
   const { user } = useAuthStore()
   const { data: documentos = [], isLoading, error } = useFiles()
@@ -190,6 +194,9 @@ export function DocumentosPage() {
 
   const hayFiltros = !!(search || tipoFiltro || rubroFiltro || establecimientoFiltro)
 
+  // Reset page when filters change
+  const resetPagina = () => setPagina(1)
+
   const filtered = documentosEnriquecidos.filter((doc) => {
     const matchSearch = doc.originalFileName.toLowerCase().includes(search.toLowerCase())
     const matchTipo = tipoFiltro ? doc.tipoDocumento === tipoFiltro : true
@@ -203,6 +210,8 @@ export function DocumentosPage() {
   const sortedByDate = [...filtered].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   )
+  const totalPaginas = Math.ceil(sortedByDate.length / POR_PAGINA)
+  const paginados = sortedByDate.slice((pagina - 1) * POR_PAGINA, pagina * POR_PAGINA)
 
   // Group by month-year for history view
   const groupedByMonth = sortedByDate.reduce<Record<string, typeof filtered>>((acc, doc) => {
@@ -289,7 +298,7 @@ export function DocumentosPage() {
               placeholder="Buscar por nombre..."
               className="pl-9"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => { setSearch(e.target.value); resetPagina() }}
             />
           </div>
 
@@ -299,7 +308,7 @@ export function DocumentosPage() {
               <Filter className="w-4 h-4 text-gray-400" />
               <select
                 value={tipoFiltro}
-                onChange={(e) => setTipoFiltro(e.target.value)}
+                onChange={(e) => { setTipoFiltro(e.target.value); resetPagina() }}
                 className="rounded-md border border-input bg-background px-3 py-2 text-sm"
               >
                 <option value="">Todos los tipos</option>
@@ -314,7 +323,7 @@ export function DocumentosPage() {
           {establecimientosDisponibles.length > 0 && (
             <select
               value={establecimientoFiltro}
-              onChange={(e) => setEstablecimientoFiltro(e.target.value)}
+              onChange={(e) => { setEstablecimientoFiltro(e.target.value); resetPagina() }}
               className="rounded-md border border-input bg-background px-3 py-2 text-sm"
             >
               <option value="">Todos los establecimientos</option>
@@ -332,7 +341,7 @@ export function DocumentosPage() {
             {rubrosDisponibles.map((r) => (
               <button
                 key={r.nombre}
-                onClick={() => setRubroFiltro(rubroFiltro === r.nombre ? '' : r.nombre)}
+                onClick={() => { setRubroFiltro(rubroFiltro === r.nombre ? '' : r.nombre); resetPagina() }}
                 className={`px-2.5 py-1 rounded-full text-xs font-medium border transition-colors ${
                   rubroFiltro === r.nombre
                     ? 'bg-blue-100 border-blue-500 text-blue-800'
@@ -343,7 +352,7 @@ export function DocumentosPage() {
               </button>
             ))}
             {rubroFiltro && (
-              <button onClick={() => setRubroFiltro('')} className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-0.5">
+              <button onClick={() => { setRubroFiltro(''); resetPagina() }} className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-0.5">
                 <X className="w-3 h-3" /> limpiar
               </button>
             )}
@@ -381,20 +390,68 @@ export function DocumentosPage() {
 
       {/* ── VISTA LISTA ── */}
       {!isLoading && !error && filtered.length > 0 && vista === 'lista' && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">
-              {filtered.length} documento{filtered.length !== 1 ? 's' : ''}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="divide-y divide-gray-100">
-              {sortedByDate.map((doc) => (
-                <DocumentoRow key={doc.id} {...rowProps(doc)} />
-              ))}
+        <>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center justify-between">
+                <span>{filtered.length} documento{filtered.length !== 1 ? 's' : ''}</span>
+                {totalPaginas > 1 && (
+                  <span className="text-xs font-normal text-gray-400">
+                    Página {pagina} de {totalPaginas}
+                  </span>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="divide-y divide-gray-100">
+                {paginados.map((doc) => (
+                  <DocumentoRow key={doc.id} {...rowProps(doc)} />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {totalPaginas > 1 && (
+            <div className="flex items-center justify-center gap-2 mt-4">
+              <Button
+                variant="outline" size="sm"
+                onClick={() => setPagina((p) => Math.max(1, p - 1))}
+                disabled={pagina === 1}
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              {Array.from({ length: totalPaginas }, (_, i) => i + 1)
+                .filter((p) => p === 1 || p === totalPaginas || Math.abs(p - pagina) <= 1)
+                .reduce<(number | '...')[]>((acc, p, idx, arr) => {
+                  if (idx > 0 && (p as number) - (arr[idx - 1] as number) > 1) acc.push('...')
+                  acc.push(p)
+                  return acc
+                }, [])
+                .map((p, idx) =>
+                  p === '...' ? (
+                    <span key={`ellipsis-${idx}`} className="text-gray-400 text-sm px-1">…</span>
+                  ) : (
+                    <Button
+                      key={p}
+                      variant={pagina === p ? 'default' : 'outline'}
+                      size="sm"
+                      className="w-8 h-8 p-0"
+                      onClick={() => setPagina(p as number)}
+                    >
+                      {p}
+                    </Button>
+                  )
+                )}
+              <Button
+                variant="outline" size="sm"
+                onClick={() => setPagina((p) => Math.min(totalPaginas, p + 1))}
+                disabled={pagina === totalPaginas}
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
             </div>
-          </CardContent>
-        </Card>
+          )}
+        </>
       )}
 
       {/* ── VISTA HISTORIAL ── */}
