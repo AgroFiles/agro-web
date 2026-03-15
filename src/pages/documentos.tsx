@@ -10,7 +10,7 @@ import { useFiles, useDeleteFile, useDownloadFile } from '@/hooks/use-files'
 import { useEstablecimientos } from '@/hooks/use-establecimientos'
 import { useRubros } from '@/hooks/use-rubros'
 import { useAuthStore } from '@/store/auth-store'
-import { formatFileSize, getThumbnailUrl, isImageFile, viewFile } from '@/lib/file-api'
+import { formatFileSize, getThumbnailUrl, isImageFile, viewFile, generateShareLink } from '@/lib/file-api'
 import { TIPOS_DOCUMENTO_LABELS } from '@/types/documento'
 import type { DocumentoMetadata } from '@/types/documento'
 import {
@@ -30,6 +30,7 @@ import {
   History,
   ChevronLeft,
   ChevronRight,
+  Link2,
 } from 'lucide-react'
 
 const SCAN_STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -47,6 +48,7 @@ function DocumentoRow({
   onDelete,
   onDownload,
   onVersiones,
+  onShare,
   isOwner,
   canWrite,
 }: {
@@ -55,6 +57,7 @@ function DocumentoRow({
   onDelete: (id: number, name: string) => void
   onDownload: (id: number, name: string) => void
   onVersiones: (id: number, name: string) => void
+  onShare: (id: number) => void
   isOwner: boolean
   canWrite: boolean
 }) {
@@ -154,6 +157,13 @@ function DocumentoRow({
         </Button>
         <Button
           size="sm" variant="ghost"
+          onClick={(e) => { e.stopPropagation(); onShare(doc.id) }}
+          title="Compartir por link"
+        >
+          <Link2 className="w-4 h-4 text-gray-500" />
+        </Button>
+        <Button
+          size="sm" variant="ghost"
           onClick={(e) => { e.stopPropagation(); onDelete(doc.id, doc.originalFileName) }}
           title="Eliminar"
         >
@@ -238,6 +248,17 @@ export function DocumentosPage() {
     downloadMutation.mutate({ documentoId: id, fileName: name })
   }
 
+  const handleShare = async (id: number) => {
+    try {
+      const token = await generateShareLink(id)
+      const url = `${window.location.origin}/doc/${token}`
+      await navigator.clipboard.writeText(url)
+      alert('Link copiado al portapapeles')
+    } catch {
+      alert('No se pudo generar el link')
+    }
+  }
+
   const rowProps = (doc: typeof filtered[0]) => {
     const isOwner = user?.tipo === 'PRODUCTOR' && doc.usuarioOwnerId === user?.id
     return {
@@ -246,6 +267,7 @@ export function DocumentosPage() {
       onDelete: handleDelete,
       onDownload: handleDownload,
       onVersiones: (id: number, name: string) => setVersionesDoc({ id, name }),
+      onShare: handleShare,
       isOwner,
       canWrite: isOwner,
     }

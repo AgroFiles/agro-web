@@ -182,3 +182,13 @@ export function formatFileSize(bytes: number): string {
 export function isImageFile(mimeType: string): boolean {
   return mimeType.startsWith('image/')
 }
+
+export async function generateShareLink(documentoId: number): Promise<string> {
+  const response = await apiClient.post<{ token: string }>(`/api/v1/documentos/${documentoId}/link`)
+  return response.data.token
+}
+
+export function getPublicDownloadUrl(token: string): string {
+  const baseUrl = apiClient.defaults.baseURL || ''
+  return `${baseUrl}/api/v1/documentos/public/${token}/download`
+}
