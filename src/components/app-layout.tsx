@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/auth-store'
 import { Button } from '@/components/ui/button'
+import { NotificacionesBell } from '@/components/notificaciones-bell'
 import {
   Home,
   FileText,
@@ -78,13 +79,14 @@ export function AppLayout({ children }: AppLayoutProps) {
             </div>
 
             {/* User + logout */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <div className="hidden sm:block text-right">
                 <p className="text-sm font-medium text-gray-900">{user?.razonSocial}</p>
                 <p className="text-xs text-gray-500">
                   {user?.tipo === 'PRODUCTOR' ? 'Productor' : 'Prestador de Servicios'}
                 </p>
               </div>
+              {user?.tipo === 'PRODUCTOR' && <NotificacionesBell />}
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="w-4 h-4 mr-2" />
                 Salir
