@@ -17,6 +17,7 @@ export interface DocumentoMetadata {
   estado: number
   createdAt: string
   updatedAt: string
+  establecimientoNombre?: string
 }
 
 export const TIPOS_DOCUMENTO = [
