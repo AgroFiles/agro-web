@@ -61,3 +61,19 @@ export interface DocumentoDownloadOptions {
   documentoId: number
   fileName: string
 }
+
+export type TipoPermiso = 'READ' | 'WRITE' | 'DELETE'
+
+export const TIPO_PERMISO_LABELS: Record<TipoPermiso, string> = {
+  READ:   'Lectura',
+  WRITE:  'Modificación',
+  DELETE: 'Eliminación',
+}
+
+export interface PermisoConUsuario {
+  usuarioId: number
+  razonSocial: string
+  email: string
+  tipoPermiso: TipoPermiso
+  createdAt: string
+}

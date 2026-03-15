@@ -11,14 +11,15 @@ import {
 } from '@/hooks/use-mis-clientes'
 import { useEstablecimientos } from '@/hooks/use-establecimientos'
 import { useRubros } from '@/hooks/use-rubros'
-import { downloadFile, viewFile, formatFileSize, isImageFile, getThumbnailUrl } from '@/lib/file-api'
+import { downloadFile, viewFile, deleteFile, formatFileSize, isImageFile, getThumbnailUrl } from '@/lib/file-api'
 import { TIPOS_DOCUMENTO, TIPOS_DOCUMENTO_LABELS } from '@/types/documento'
-import type { User } from '@/types/user'
+import type { ClienteConNivel } from '@/lib/cliente-api'
 import type { DocumentoMetadata } from '@/types/documento'
 import {
   Users,
   Upload,
   Download,
+  Trash2,
   FileText,
   Loader2,
   AlertCircle,
@@ -33,7 +34,7 @@ function UploadParaClienteDialog({
   sharedEstablecimientos,
   onClose,
 }: {
-  cliente: User
+  cliente: { id: number; razonSocial: string }
   sharedEstablecimientos: { id: number; nombre: string }[]
   onClose: () => void
 }) {
@@ -165,8 +166,17 @@ function UploadParaClienteDialog({
 }
 
 // ── Document row ──────────────────────────────────────────────────────────────
-function DocumentoRow({ doc }: { doc: DocumentoMetadata }) {
+function DocumentoRow({
+  doc,
+  nivelPermiso,
+  onDeleted,
+}: {
+  doc: DocumentoMetadata
+  nivelPermiso: 'READ' | 'WRITE' | 'DELETE'
+  onDeleted: (id: number) => void
+}) {
   const [downloading, setDownloading] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   const handleDownload = async (e: React.MouseEvent) => {
     e.stopPropagation()
@@ -175,6 +185,18 @@ function DocumentoRow({ doc }: { doc: DocumentoMetadata }) {
       await downloadFile({ documentoId: doc.id, fileName: doc.originalFileName })
     } finally {
       setDownloading(false)
+    }
+  }
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!window.confirm(`¿Eliminar "${doc.originalFileName}"?`)) return
+    setDeleting(true)
+    try {
+      await deleteFile(doc.id)
+      onDeleted(doc.id)
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -203,12 +225,19 @@ function DocumentoRow({ doc }: { doc: DocumentoMetadata }) {
         </p>
       </div>
       <Button variant="ghost" size="sm" onClick={handleDownload} disabled={downloading}>
-        {downloading ? (
-          <Loader2 className="w-4 h-4 animate-spin" />
-        ) : (
-          <Download className="w-4 h-4" />
-        )}
+        {downloading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
       </Button>
+      {nivelPermiso === 'DELETE' && (
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleDelete}
+          disabled={deleting}
+          className="text-red-400 hover:text-red-600 hover:bg-red-50"
+        >
+          {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+        </Button>
+      )}
     </div>
   )
 }
@@ -217,14 +246,18 @@ function DocumentoRow({ doc }: { doc: DocumentoMetadata }) {
 function ClientePanel({
   cliente,
   sharedEstablecimientos,
+  nivelPermiso,
   onBack,
 }: {
-  cliente: User
+  cliente: ClienteConNivel
   sharedEstablecimientos: { id: number; nombre: string }[]
+  nivelPermiso: 'READ' | 'WRITE' | 'DELETE'
   onBack: () => void
 }) {
   const [uploadOpen, setUploadOpen] = useState(false)
-  const { data: documentos = [], isLoading } = useDocumentosDeCliente(cliente.id)
+  const { data: documentos = [], isLoading, refetch } = useDocumentosDeCliente(cliente.productorId)
+
+  const handleDeleted = () => refetch()
 
   return (
     <div>
@@ -269,14 +302,14 @@ function ClientePanel({
         <div className="space-y-2">
           <p className="text-sm text-gray-500 mb-3">{documentos.length} documento{documentos.length !== 1 ? 's' : ''}</p>
           {documentos.map((doc) => (
-            <DocumentoRow key={doc.id} doc={doc} />
+            <DocumentoRow key={doc.id} doc={doc} nivelPermiso={nivelPermiso} onDeleted={handleDeleted} />
           ))}
         </div>
       )}
 
       {uploadOpen && (
         <UploadParaClienteDialog
-          cliente={cliente}
+          cliente={{ id: cliente.productorId, razonSocial: cliente.razonSocial }}
           sharedEstablecimientos={sharedEstablecimientos}
           onClose={() => setUploadOpen(false)}
         />
@@ -287,7 +320,7 @@ function ClientePanel({
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 export function MisClientesPage() {
-  const [selectedCliente, setSelectedCliente] = useState<User | null>(null)
+  const [selectedCliente, setSelectedCliente] = useState<ClienteConNivel | null>(null)
   const { data: clientes = [], isLoading, error } = useMisClientes()
   // Establishments shared with the prestador (owner = client)
   const { data: sharedEstablecimientos = [] } = useEstablecimientos()
@@ -300,7 +333,8 @@ export function MisClientesPage() {
       <AppLayout>
         <ClientePanel
           cliente={selectedCliente}
-          sharedEstablecimientos={getClienteEstablecimientos(selectedCliente.id)}
+          sharedEstablecimientos={getClienteEstablecimientos(selectedCliente.productorId)}
+          nivelPermiso={selectedCliente.nivelPermiso}
           onBack={() => setSelectedCliente(null)}
         />
       </AppLayout>
@@ -336,10 +370,10 @@ export function MisClientesPage() {
       ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {clientes.map((cliente) => {
-            const establecimientos = getClienteEstablecimientos(cliente.id)
+            const establecimientos = getClienteEstablecimientos(cliente.productorId)
             return (
               <Card
-                key={cliente.id}
+                key={cliente.productorId}
                 className="cursor-pointer hover:shadow-md transition-shadow"
                 onClick={() => setSelectedCliente(cliente)}
               >

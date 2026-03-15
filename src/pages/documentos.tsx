@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { AppLayout } from '@/components/app-layout'
 import { FileUploadDialog } from '@/components/file-upload-dialog'
+import { PermisosDocumentoDialog } from '@/components/permisos-documento-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { useFiles, useDeleteFile, useDownloadFile } from '@/hooks/use-files'
 import { useEstablecimientos } from '@/hooks/use-establecimientos'
+import { useAuthStore } from '@/store/auth-store'
 import { formatFileSize, getThumbnailUrl, isImageFile, viewFile } from '@/lib/file-api'
 import { TIPOS_DOCUMENTO_LABELS } from '@/types/documento'
 import {
@@ -18,6 +20,7 @@ import {
   Search,
   Clock,
   Filter,
+  Users,
 } from 'lucide-react'
 
 const SCAN_STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -30,9 +33,12 @@ const SCAN_STATUS_LABELS: Record<string, { label: string; color: string }> = {
 
 export function DocumentosPage() {
   const [uploadOpen, setUploadOpen] = useState(false)
+  const [permisosDocId, setPermisosDocId] = useState<number | null>(null)
+  const [permisosFileName, setPermisosFileName] = useState('')
   const [search, setSearch] = useState('')
   const [tipoFiltro, setTipoFiltro] = useState('')
 
+  const { user } = useAuthStore()
   const { data: documentos = [], isLoading, error } = useFiles()
   const { data: establecimientos = [] } = useEstablecimientos()
   const deleteMutation = useDeleteFile()
@@ -179,6 +185,15 @@ export function DocumentosPage() {
 
                     {/* Actions */}
                     <div className="flex gap-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                      {user?.tipo === 'PRODUCTOR' && doc.usuarioOwnerId === user?.id && (
+                        <Button
+                          size="sm" variant="ghost"
+                          onClick={(e) => { e.stopPropagation(); setPermisosDocId(doc.id); setPermisosFileName(doc.originalFileName) }}
+                          title="Gestionar acceso"
+                        >
+                          <Users className="w-4 h-4 text-gray-500" />
+                        </Button>
+                      )}
                       <Button
                         size="sm" variant="ghost"
                         onClick={(e) => { e.stopPropagation(); downloadMutation.mutate({ documentoId: doc.id, fileName: doc.originalFileName }) }}
@@ -216,6 +231,14 @@ export function DocumentosPage() {
         onOpenChange={setUploadOpen}
         establecimientos={establecimientos}
       />
+
+      {permisosDocId && (
+        <PermisosDocumentoDialog
+          documentoId={permisosDocId}
+          fileName={permisosFileName}
+          onClose={() => setPermisosDocId(null)}
+        />
+      )}
     </AppLayout>
   )
 }

@@ -1,9 +1,16 @@
 import { apiClient } from './api-client'
-import type { User } from '../types/user'
 import type { DocumentoMetadata } from '../types/documento'
 
-export async function listMisClientes(): Promise<User[]> {
-  const response = await apiClient.get<User[]>('/api/v1/usuarios/mis-clientes')
+export interface ClienteConNivel {
+  productorId: number
+  razonSocial: string
+  email: string
+  rubros: string[]
+  nivelPermiso: 'READ' | 'WRITE' | 'DELETE'
+}
+
+export async function listMisClientes(): Promise<ClienteConNivel[]> {
+  const response = await apiClient.get<ClienteConNivel[]>('/api/v1/autorizaciones/mis-productores')
   return response.data
 }
 

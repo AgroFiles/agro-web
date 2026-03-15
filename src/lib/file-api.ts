@@ -128,10 +128,15 @@ export function getThumbnailUrl(id: number): string {
   return `${baseUrl}/api/v1/documentos/${id}/thumbnail`
 }
 
+export async function getPermisos(documentoId: number) {
+  const response = await apiClient.get(`/api/v1/documentos/${documentoId}/permisos`)
+  return response.data
+}
+
 export async function compartirDocumento(
   documentoId: number,
   usuarioId: number,
-  tipoPermiso: 'READ' | 'WRITE'
+  tipoPermiso: 'READ' | 'WRITE' | 'DELETE'
 ): Promise<void> {
   await apiClient.post(`/api/v1/documentos/${documentoId}/permisos`, {
     usuarioId,

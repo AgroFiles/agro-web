@@ -5,6 +5,7 @@ export interface AutorizacionDTO {
   razonSocial: string
   email: string
   rubros: string[]
+  nivelPermiso: 'READ' | 'WRITE' | 'DELETE'
 }
 
 export interface ProductorAutorizanteDTO {
@@ -21,13 +22,22 @@ export async function listAutorizaciones(): Promise<AutorizacionDTO[]> {
 
 export async function autorizarPrestador(
   prestadorId: number,
-  rubros: string[]
+  rubros: string[],
+  nivelPermiso: string = 'READ'
 ): Promise<AutorizacionDTO[]> {
   const response = await apiClient.post<AutorizacionDTO[]>('/api/v1/autorizaciones', {
     prestadorId,
     rubros,
+    nivelPermiso,
   })
   return response.data
+}
+
+export async function actualizarNivelPrestador(
+  prestadorId: number,
+  nivelPermiso: string
+): Promise<void> {
+  await apiClient.put(`/api/v1/autorizaciones/${prestadorId}/nivel`, { nivelPermiso })
 }
 
 export async function revocarPrestador(prestadorId: number): Promise<void> {
