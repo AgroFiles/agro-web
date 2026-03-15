@@ -151,6 +151,26 @@ export async function revocarPermisoDocumento(
   await apiClient.delete(`/api/v1/documentos/${documentoId}/permisos/${usuarioId}`)
 }
 
+export async function getVersiones(documentoId: number) {
+  const response = await apiClient.get(`/api/v1/documentos/${documentoId}/versiones`)
+  return response.data
+}
+
+export async function uploadNewVersion(
+  documentoId: number,
+  file: File,
+  onProgress?: (pct: number) => void
+): Promise<void> {
+  const formData = new FormData()
+  formData.append('file', file)
+  await apiClient.post(`/api/v1/documentos/${documentoId}/versiones`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+    onUploadProgress: (e) => {
+      if (onProgress && e.total) onProgress(Math.round((e.loaded * 100) / e.total))
+    },
+  })
+}
+
 export function formatFileSize(bytes: number): string {
   if (bytes === 0) return '0 B'
   const k = 1024

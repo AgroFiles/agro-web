@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { AppLayout } from '@/components/app-layout'
 import { FileUploadDialog } from '@/components/file-upload-dialog'
 import { PermisosDocumentoDialog } from '@/components/permisos-documento-dialog'
+import { VersionesDialog } from '@/components/versiones-dialog'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -26,6 +27,7 @@ import {
   List,
   CalendarDays,
   X,
+  History,
 } from 'lucide-react'
 
 const SCAN_STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -42,19 +44,24 @@ function DocumentoRow({
   onPermisos,
   onDelete,
   onDownload,
+  onVersiones,
   isOwner,
+  canWrite,
 }: {
   doc: DocumentoMetadata
   onPermisos: (id: number, name: string) => void
   onDelete: (id: number, name: string) => void
   onDownload: (id: number, name: string) => void
+  onVersiones: (id: number, name: string) => void
   isOwner: boolean
+  canWrite: boolean
 }) {
   const scan = SCAN_STATUS_LABELS[doc.scanStatus]
   const fecha = new Date(doc.createdAt).toLocaleDateString('es-ES', {
     year: 'numeric', month: 'short', day: 'numeric',
   })
   const estabNombre = doc.establecimientoNombre
+  const version = doc.versionNumero ?? 1
 
   return (
     <div
@@ -74,7 +81,18 @@ function DocumentoRow({
       )}
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900 truncate">{doc.originalFileName}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-medium text-gray-900 truncate">{doc.originalFileName}</p>
+          {version > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); onVersiones(doc.id, doc.originalFileName) }}
+              className="flex-shrink-0 px-1.5 py-0.5 rounded text-xs font-medium bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition-colors"
+              title="Ver historial de versiones"
+            >
+              v{version}
+            </button>
+          )}
+        </div>
         <div className="flex items-center gap-2 mt-0.5 flex-wrap">
           <span className="text-xs text-gray-400 flex items-center gap-1">
             <Clock className="w-3 h-3" />
@@ -107,6 +125,15 @@ function DocumentoRow({
       </div>
 
       <div className="flex gap-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+        {canWrite && (
+          <Button
+            size="sm" variant="ghost"
+            onClick={(e) => { e.stopPropagation(); onVersiones(doc.id, doc.originalFileName) }}
+            title="Versiones"
+          >
+            <History className="w-4 h-4 text-gray-500" />
+          </Button>
+        )}
         {isOwner && (
           <Button
             size="sm" variant="ghost"
@@ -140,6 +167,7 @@ export function DocumentosPage() {
   const [uploadOpen, setUploadOpen] = useState(false)
   const [permisosDocId, setPermisosDocId] = useState<number | null>(null)
   const [permisosFileName, setPermisosFileName] = useState('')
+  const [versionesDoc, setVersionesDoc] = useState<{ id: number; name: string } | null>(null)
   const [search, setSearch] = useState('')
   const [tipoFiltro, setTipoFiltro] = useState('')
   const [rubroFiltro, setRubroFiltro] = useState('')
@@ -201,13 +229,18 @@ export function DocumentosPage() {
     downloadMutation.mutate({ documentoId: id, fileName: name })
   }
 
-  const rowProps = (doc: typeof filtered[0]) => ({
-    doc,
-    onPermisos: (id: number, name: string) => { setPermisosDocId(id); setPermisosFileName(name) },
-    onDelete: handleDelete,
-    onDownload: handleDownload,
-    isOwner: user?.tipo === 'PRODUCTOR' && doc.usuarioOwnerId === user?.id,
-  })
+  const rowProps = (doc: typeof filtered[0]) => {
+    const isOwner = user?.tipo === 'PRODUCTOR' && doc.usuarioOwnerId === user?.id
+    return {
+      doc,
+      onPermisos: (id: number, name: string) => { setPermisosDocId(id); setPermisosFileName(name) },
+      onDelete: handleDelete,
+      onDownload: handleDownload,
+      onVersiones: (id: number, name: string) => setVersionesDoc({ id, name }),
+      isOwner,
+      canWrite: isOwner,
+    }
+  }
 
   return (
     <AppLayout>
@@ -404,6 +437,15 @@ export function DocumentosPage() {
           documentoId={permisosDocId}
           fileName={permisosFileName}
           onClose={() => setPermisosDocId(null)}
+        />
+      )}
+
+      {versionesDoc && (
+        <VersionesDialog
+          documentoId={versionesDoc.id}
+          fileName={versionesDoc.name}
+          canUpload={true}
+          onClose={() => setVersionesDoc(null)}
         />
       )}
     </AppLayout>
