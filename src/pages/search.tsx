@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
-  Sprout,
   Search as SearchIcon,
   FileText,
   Folder,
@@ -74,7 +73,7 @@ export function SearchPage() {
 
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-600 hidden sm:block">
-                Hola, <span className="font-medium">{user?.name}</span>
+                Hola, <span className="font-medium">{user?.razonSocial}</span>
               </span>
               <Button variant="outline" size="sm" onClick={handleLogout}>
                 <LogOut className="w-4 h-4 mr-2" />

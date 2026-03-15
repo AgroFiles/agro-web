@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import type { AuthState, User } from '@/types/user'
+import type { AuthState, User, SignupParams } from '@/types/user'
 import { apiClient } from '@/lib/api-client'
 
 interface AuthResponse {
@@ -19,40 +19,27 @@ export const useAuthStore = create<AuthState>()(
       login: async (email: string, password: string) => {
         set({ isLoading: true })
         try {
-          const response = await apiClient.post<AuthResponse>('/auth/login', {
-            email,
-            password,
-          })
-
+          const response = await apiClient.post<AuthResponse>('/auth/login', { email, password })
           const { token, user } = response.data
-          set({
-            token,
-            user,
-            isAuthenticated: true,
-            isLoading: false,
-          })
+          set({ token, user, isAuthenticated: true, isLoading: false })
         } catch (error) {
           set({ isLoading: false })
           throw error
         }
       },
 
-      signup: async (email: string, password: string, name: string) => {
+      signup: async ({ email, password, razonSocial, cuit, tipo }: SignupParams) => {
         set({ isLoading: true })
         try {
           const response = await apiClient.post<AuthResponse>('/auth/register', {
             email,
             password,
-            name,
+            razonSocial,
+            cuit: cuit || undefined,
+            tipo,
           })
-
           const { token, user } = response.data
-          set({
-            token,
-            user,
-            isAuthenticated: true,
-            isLoading: false,
-          })
+          set({ token, user, isAuthenticated: true, isLoading: false })
         } catch (error) {
           set({ isLoading: false })
           throw error

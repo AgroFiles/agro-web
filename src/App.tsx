@@ -3,7 +3,11 @@ import { LandingPage } from '@/pages/landing'
 import { SignInPage } from '@/pages/sign-in'
 import { SignUpPage } from '@/pages/sign-up'
 import { DashboardPage } from '@/pages/dashboard'
-import { SearchPage } from '@/pages/search'
+import { DocumentosPage } from '@/pages/documentos'
+import { EstablecimientosPage } from '@/pages/establecimientos'
+import { PerfilPage } from '@/pages/perfil'
+import { MisClientesPage } from '@/pages/mis-clientes'
+import { RedColaboracionPage } from '@/pages/red-colaboracion'
 import { ProtectedRoute } from '@/components/protected-route'
 import { useAuthStore } from '@/store/auth-store'
 import { Toaster } from '@/components/ui/sonner'
@@ -15,42 +19,27 @@ function App() {
     <BrowserRouter>
       <Toaster />
       <Routes>
-        {/* Ruta raíz - Landing page pública */}
         <Route path="/" element={<LandingPage />} />
 
-        {/* Rutas públicas - redirigen al dashboard si ya está autenticado */}
         <Route
           path="/sign-in"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignInPage />
-          }
+          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignInPage />}
         />
         <Route
           path="/sign-up"
-          element={
-            isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpPage />
-          }
+          element={isAuthenticated ? <Navigate to="/dashboard" replace /> : <SignUpPage />}
         />
 
-        {/* Rutas protegidas */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/search"
-          element={
-            <ProtectedRoute>
-              <SearchPage />
-            </ProtectedRoute>
-          }
-        />
+        <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+        <Route path="/documentos" element={<ProtectedRoute><DocumentosPage /></ProtectedRoute>} />
+        <Route path="/establecimientos" element={<ProtectedRoute><EstablecimientosPage /></ProtectedRoute>} />
+        <Route path="/perfil" element={<ProtectedRoute><PerfilPage /></ProtectedRoute>} />
+        <Route path="/mis-clientes" element={<ProtectedRoute><MisClientesPage /></ProtectedRoute>} />
+        <Route path="/red-colaboracion" element={<ProtectedRoute><RedColaboracionPage /></ProtectedRoute>} />
 
-        {/* Ruta 404 */}
+        {/* Legacy redirect */}
+        <Route path="/search" element={<Navigate to="/documentos" replace />} />
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
