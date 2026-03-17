@@ -20,6 +20,7 @@ export interface DocumentoMetadata {
   establecimientoNombre?: string
   versionNumero?: number
   documentoRaizId?: number
+  ownerRazonSocial?: string
 }
 
 export const TIPOS_DOCUMENTO = [

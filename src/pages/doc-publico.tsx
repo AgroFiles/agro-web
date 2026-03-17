@@ -22,14 +22,17 @@ export function DocPublicoPage() {
       .finally(() => setLoading(false))
   }, [token])
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     if (!doc || !token) return
-    const baseUrl = apiClient.defaults.baseURL || ''
-    const url = `${baseUrl}/api/v1/documentos/public/${token}/download`
+    const response = await apiClient.get(`/api/v1/documentos/public/${token}/download`, {
+      responseType: 'blob',
+    })
+    const url = window.URL.createObjectURL(new Blob([response.data]))
     const a = document.createElement('a')
     a.href = url
     a.download = doc.originalFileName
     a.click()
+    window.URL.revokeObjectURL(url)
   }
 
   return (
@@ -60,6 +63,11 @@ export function DocPublicoPage() {
 
         {doc && !loading && (
           <div className="space-y-4">
+            {doc.ownerRazonSocial && (
+              <p className="text-sm text-gray-500">
+                Documento de <span className="font-medium text-gray-700">{doc.ownerRazonSocial}</span>
+              </p>
+            )}
             <div className="border rounded-lg p-4 space-y-2">
               <p className="font-medium text-gray-900 break-all">{doc.originalFileName}</p>
               <div className="flex flex-wrap gap-2 text-sm text-gray-500">
