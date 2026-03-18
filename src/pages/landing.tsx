@@ -21,9 +21,9 @@ export function LandingPage() {
       {/* ── Navbar ─────────────────────────────────────────────────────────── */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="AgroData" className="w-9 h-9 object-contain" />
-            <span className="text-lg font-bold text-gray-900 tracking-tight">AgroData</span>
+          <div className="flex items-center gap-1">
+            <img src="/logo-icon.png" alt="AgroData" className="h-12 w-auto object-contain" />
+            <span className="text-lg font-bold text-gray-900 tracking-tight -ml-1">AgroData</span>
           </div>
           <nav className="hidden md:flex items-center gap-8 text-sm text-gray-600 font-medium">
             <a href="#features" className="hover:text-blue-700 transition-colors">Funcionalidades</a>
@@ -378,7 +378,7 @@ export function LandingPage() {
       <footer className="bg-blue-950 text-blue-400 py-10">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="AgroData" className="w-8 h-8 object-contain opacity-80" />
+            <img src="/logo-icon.png" alt="AgroData" className="h-9 w-auto object-contain opacity-90" />
             <span className="font-semibold text-blue-200">AgroData</span>
           </div>
           <p className="text-sm">© 2025 AgroData · Desarrollado para el campo argentino</p>

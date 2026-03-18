@@ -45,7 +45,7 @@ export function SignInPage() {
         {/* Logo y título */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center mb-4">
-            <img src="/logo.png" alt="AgroFiles Logo" className="w-24 h-24 object-contain" />
+            <img src="/logo.png" alt="AgroData" className="h-28 w-auto object-contain" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">AgroFiles</h1>
           <p className="text-gray-600">Tu registro histórico agropecuario</p>

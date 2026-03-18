@@ -66,7 +66,7 @@ export function SignUpPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center mb-4">
-            <img src="/logo.png" alt="AgroData Logo" className="w-24 h-24 object-contain" />
+            <img src="/logo.png" alt="AgroData" className="h-28 w-auto object-contain" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">AgroData</h1>
           <p className="text-gray-600">Tu historial clínico del campo</p>

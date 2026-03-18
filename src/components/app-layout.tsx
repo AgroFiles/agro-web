@@ -53,9 +53,9 @@ export function AppLayout({ children }: AppLayoutProps) {
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center gap-4">
-              <Link to="/dashboard" className="flex items-center gap-3">
-                <img src="/logo.png" alt="AgroData" className="w-10 h-10 object-contain" />
-                <span className="text-xl font-bold text-gray-900 hidden sm:block">AgroData</span>
+              <Link to="/dashboard" className="flex items-center gap-1">
+                <img src="/logo-icon.png" alt="AgroData" className="h-12 w-auto object-contain" />
+                <span className="text-xl font-bold text-gray-900 hidden sm:block -ml-1">AgroData</span>
               </Link>
 
               {/* Navigation */}
