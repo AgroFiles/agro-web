@@ -8,30 +8,30 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Paleta azul moderna para AgroFiles - Campo + Tecnología Argentina
+        // Paleta azul — AgroData
         primary: {
-          50: '#e6f0ff',
-          100: '#cce0ff',
-          200: '#99c1ff',
-          300: '#66a3ff',
-          400: '#3384ff',
-          500: '#0066ff', // Azul principal - Tecnología
-          600: '#0052cc',
-          700: '#003d99',
-          800: '#002966',
-          900: '#001433',
+          50:  '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6',
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
         },
         field: {
-          50: '#f0f7ff',
-          100: '#e0effe',
-          200: '#b9ddfe',
-          300: '#7cc4fd',
-          400: '#36a8fa',
-          500: '#0c8feb', // Azul campo argentino
-          600: '#0070c8',
-          700: '#0159a2',
-          800: '#064c85',
-          900: '#0b406e',
+          50:  '#f0f9ff',
+          100: '#e0f2fe',
+          200: '#bae6fd',
+          300: '#7dd3fc',
+          400: '#38bdf8',
+          500: '#0ea5e9',
+          600: '#0284c7',
+          700: '#0369a1',
+          800: '#075985',
+          900: '#0c4a6e',
         },
         // Colores del sistema
         border: "hsl(var(--border))",
