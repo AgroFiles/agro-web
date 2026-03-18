@@ -54,8 +54,8 @@ export function AppLayout({ children }: AppLayoutProps) {
             {/* Logo */}
             <div className="flex items-center gap-4">
               <Link to="/dashboard" className="flex items-center gap-1">
-                <img src="/logo-icon.png" alt="AgroData" className="h-12 w-auto object-contain" />
-                <span className="text-xl font-bold text-gray-900 hidden sm:block -ml-1">AgroData</span>
+                <img src="/logo-icon.png" alt="AgroLinks" className="h-12 w-auto object-contain" />
+                <span className="text-xl font-bold text-gray-900 hidden sm:block -ml-1">AgroLinks</span>
               </Link>
 
               {/* Navigation */}

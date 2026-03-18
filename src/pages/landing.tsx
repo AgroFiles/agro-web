@@ -22,8 +22,8 @@ export function LandingPage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-1">
-            <img src="/logo-icon.png" alt="AgroData" className="h-12 w-auto object-contain" />
-            <span className="text-lg font-bold text-gray-900 tracking-tight -ml-1">AgroData</span>
+            <img src="/logo-icon.png" alt="AgroLinks" className="h-12 w-auto object-contain" />
+            <span className="text-lg font-bold text-gray-900 tracking-tight -ml-1">AgroLinks</span>
           </div>
           <nav className="hidden md:flex items-center gap-8 text-sm text-gray-600 font-medium">
             <a href="#features" className="hover:text-blue-700 transition-colors">Funcionalidades</a>
@@ -234,7 +234,7 @@ export function LandingPage() {
                 Para toda la cadena del agro argentino
               </h2>
               <p className="text-gray-500 text-lg mb-10 leading-relaxed">
-                Ya seas productor ganadero, agrícola o prestador de servicios, AgroData se adapta a tu flujo de trabajo sin complicaciones.
+                Ya seas productor ganadero, agrícola o prestador de servicios, AgroLinks se adapta a tu flujo de trabajo sin complicaciones.
               </p>
 
               <div className="space-y-7">
@@ -345,7 +345,7 @@ export function LandingPage() {
             El campo que produce merece<br className="hidden md:block" /> una gestión a la altura
           </h2>
           <p className="text-gray-500 text-lg mb-10 max-w-xl mx-auto">
-            Sumarte a AgroData es gratis. Sin letra chica, sin tarjeta de crédito.
+            Sumarte a AgroLinks es gratis. Sin letra chica, sin tarjeta de crédito.
           </p>
 
           {/* Checkmarks */}
@@ -378,10 +378,10 @@ export function LandingPage() {
       <footer className="bg-blue-950 text-blue-400 py-10">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <img src="/logo-icon.png" alt="AgroData" className="h-9 w-auto object-contain opacity-90" />
-            <span className="font-semibold text-blue-200">AgroData</span>
+            <img src="/logo-icon.png" alt="AgroLinks" className="h-9 w-auto object-contain opacity-90" />
+            <span className="font-semibold text-blue-200">AgroLinks</span>
           </div>
-          <p className="text-sm">© 2025 AgroData · Desarrollado para el campo argentino</p>
+          <p className="text-sm">© 2025 AgroLinks · Desarrollado para el campo argentino</p>
           <div className="flex gap-6 text-sm">
             <Link to="/sign-in" className="hover:text-white transition-colors">Iniciar sesión</Link>
             <Link to="/sign-up" className="hover:text-white transition-colors">Registrarse</Link>

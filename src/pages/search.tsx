@@ -54,8 +54,8 @@ export function SearchPage() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-3">
-                <img src="/logo.png" alt="AgroFiles Logo" className="w-12 h-12 object-contain" />
-                <h1 className="text-xl font-bold text-gray-900">AgroFiles</h1>
+                <img src="/logo.png" alt="AgroLinks Logo" className="w-12 h-12 object-contain" />
+                <h1 className="text-xl font-bold text-gray-900">AgroLinks</h1>
               </div>
 
               {/* Navegación */}

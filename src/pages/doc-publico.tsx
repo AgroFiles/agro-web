@@ -43,7 +43,7 @@ export function DocPublicoPage() {
             <FileText className="w-5 h-5 text-green-700" />
           </div>
           <div>
-            <h1 className="text-lg font-semibold text-gray-900">AgroData</h1>
+            <h1 className="text-lg font-semibold text-gray-900">AgroLinks</h1>
             <p className="text-sm text-gray-500">Documento compartido</p>
           </div>
         </div>
