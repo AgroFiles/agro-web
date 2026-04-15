@@ -3,6 +3,7 @@ import { AppLayout } from '@/components/app-layout'
 import { FileUploadDialog } from '@/components/file-upload-dialog'
 import { PermisosDocumentoDialog } from '@/components/permisos-documento-dialog'
 import { VersionesDialog } from '@/components/versiones-dialog'
+import { DocumentoViewer } from '@/components/documento-viewer'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -10,9 +11,9 @@ import { useFiles, useDeleteFile, useDownloadFile } from '@/hooks/use-files'
 import { useEstablecimientos } from '@/hooks/use-establecimientos'
 import { useRubros } from '@/hooks/use-rubros'
 import { useAuthStore } from '@/store/auth-store'
-import { formatFileSize, getThumbnailUrl, isImageFile, viewFile, generateShareLink } from '@/lib/file-api'
+import { formatFileSize, getThumbnailUrl, isImageFile, generateShareLink } from '@/lib/file-api'
 import { TIPOS_DOCUMENTO_LABELS } from '@/types/documento'
-import type { DocumentoMetadata } from '@/types/documento'
+import type { DocumentoMetadata, RomaneoRow } from '@/types/documento'
 import {
   FileText,
   Upload,
@@ -31,6 +32,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Link2,
+  ChevronDown,
+  ChevronUp,
+  TableIcon,
 } from 'lucide-react'
 
 const SCAN_STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -41,6 +45,38 @@ const SCAN_STATUS_LABELS: Record<string, { label: string; color: string }> = {
   SKIPPED:  { label: 'Omitido',   color: 'text-gray-600 bg-gray-50'    },
 }
 
+// ── Romaneo data table ────────────────────────────────────────────────────────
+function RomaneoTable({ rows }: { rows: RomaneoRow[] }) {
+  return (
+    <div className="mt-2 mb-1 overflow-x-auto rounded-lg border border-blue-100 bg-blue-50/50">
+      <table className="w-full text-xs">
+        <thead>
+          <tr className="border-b border-blue-100 text-blue-700">
+            <th className="px-3 py-2 text-left font-medium">ID</th>
+            <th className="px-3 py-2 text-left font-medium">Tipo</th>
+            <th className="px-3 py-2 text-right font-medium">Cant.</th>
+            <th className="px-3 py-2 text-left font-medium">Cat.</th>
+            <th className="px-3 py-2 text-left font-medium">Subtipo</th>
+            <th className="px-3 py-2 text-right font-medium">Peso (kg)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr key={i} className="border-b border-blue-100/50 last:border-0 hover:bg-blue-100/30">
+              <td className="px-3 py-1.5 text-gray-700">{row.id}</td>
+              <td className="px-3 py-1.5 text-gray-700">{row.type}</td>
+              <td className="px-3 py-1.5 text-right text-gray-700">{row.quantity}</td>
+              <td className="px-3 py-1.5 text-gray-700">{row.category}</td>
+              <td className="px-3 py-1.5 text-gray-700">{row.subtype}</td>
+              <td className="px-3 py-1.5 text-right font-medium text-gray-800">{row.weight}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  )
+}
+
 // ── Single document row (shared between list and history views) ───────────────
 function DocumentoRow({
   doc,
@@ -49,6 +85,7 @@ function DocumentoRow({
   onDownload,
   onVersiones,
   onShare,
+  onView,
   isOwner,
   canWrite,
 }: {
@@ -58,20 +95,24 @@ function DocumentoRow({
   onDownload: (id: number, name: string) => void
   onVersiones: (id: number, name: string) => void
   onShare: (id: number) => void
+  onView: (id: number, name: string) => void
   isOwner: boolean
   canWrite: boolean
 }) {
+  const [expanded, setExpanded] = useState(false)
   const scan = SCAN_STATUS_LABELS[doc.scanStatus]
   const fecha = new Date(doc.createdAt).toLocaleDateString('es-ES', {
     year: 'numeric', month: 'short', day: 'numeric',
   })
   const estabNombre = doc.establecimientoNombre
   const version = doc.versionNumero ?? 1
+  const romaneoRows = doc.datosExtraidos?.data
 
   return (
+    <div className="rounded-lg px-2 -mx-2 hover:bg-gray-50">
     <div
-      className="flex items-center gap-3 py-3 group cursor-pointer hover:bg-gray-50 rounded-lg px-2 -mx-2"
-      onClick={() => viewFile(doc.id)}
+      className="flex items-center gap-3 py-3 group cursor-pointer"
+      onClick={() => onView(doc.id, doc.originalFileName)}
     >
       {doc.hasThumbnail && isImageFile(doc.mimeType) ? (
         <img
@@ -130,6 +171,16 @@ function DocumentoRow({
       </div>
 
       <div className="flex gap-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+        {romaneoRows && romaneoRows.length > 0 && (
+          <Button
+            size="sm" variant="ghost"
+            onClick={(e) => { e.stopPropagation(); setExpanded(!expanded) }}
+            title="Ver datos extraídos"
+          >
+            <TableIcon className="w-4 h-4 text-blue-500" />
+            {expanded ? <ChevronUp className="w-3 h-3 text-blue-500" /> : <ChevronDown className="w-3 h-3 text-blue-500" />}
+          </Button>
+        )}
         {canWrite && (
           <Button
             size="sm" variant="ghost"
@@ -171,6 +222,10 @@ function DocumentoRow({
         </Button>
       </div>
     </div>
+    {expanded && romaneoRows && romaneoRows.length > 0 && (
+      <RomaneoTable rows={romaneoRows} />
+    )}
+    </div>
   )
 }
 
@@ -180,6 +235,7 @@ export function DocumentosPage() {
   const [permisosDocId, setPermisosDocId] = useState<number | null>(null)
   const [permisosFileName, setPermisosFileName] = useState('')
   const [versionesDoc, setVersionesDoc] = useState<{ id: number; name: string } | null>(null)
+  const [viewerDoc, setViewerDoc] = useState<{ id: number; name: string } | null>(null)
   const [search, setSearch] = useState('')
   const [tipoFiltro, setTipoFiltro] = useState('')
   const [rubroFiltro, setRubroFiltro] = useState('')
@@ -267,6 +323,7 @@ export function DocumentosPage() {
       onDelete: handleDelete,
       onDownload: handleDownload,
       onVersiones: (id: number, name: string) => setVersionesDoc({ id, name }),
+      onView: (id: number, name: string) => setViewerDoc({ id, name }),
       onShare: handleShare,
       isOwner,
       canWrite: isOwner,
@@ -525,6 +582,14 @@ export function DocumentosPage() {
           fileName={versionesDoc.name}
           canUpload={true}
           onClose={() => setVersionesDoc(null)}
+        />
+      )}
+
+      {viewerDoc && (
+        <DocumentoViewer
+          documentoId={viewerDoc.id}
+          fileName={viewerDoc.name}
+          onClose={() => setViewerDoc(null)}
         />
       )}
     </AppLayout>

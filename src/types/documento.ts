@@ -21,6 +21,24 @@ export interface DocumentoMetadata {
   versionNumero?: number
   documentoRaizId?: number
   ownerRazonSocial?: string
+  datosExtraidos?: RomaneoExtraccion | null
+}
+
+export interface RomaneoRow {
+  id: string
+  type: string
+  quantity: number
+  category: string
+  grade: number
+  subtype: string
+  code1: string
+  code2: string
+  weight: number
+}
+
+export interface RomaneoExtraccion {
+  status: number
+  data: RomaneoRow[]
 }
 
 export const TIPOS_DOCUMENTO = [
