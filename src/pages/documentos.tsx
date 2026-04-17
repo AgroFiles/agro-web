@@ -35,6 +35,7 @@ import {
   ChevronDown,
   ChevronUp,
   TableIcon,
+  FileJson,
 } from 'lucide-react'
 
 const SCAN_STATUS_LABELS: Record<string, { label: string; color: string }> = {
@@ -101,6 +102,18 @@ function DocumentoRow({
 }) {
   const [expanded, setExpanded] = useState(false)
   const scan = SCAN_STATUS_LABELS[doc.scanStatus]
+
+  const handleExportJson = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    const json = JSON.stringify(doc.datosExtraidos, null, 2)
+    const blob = new Blob([json], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `${doc.originalFileName.replace(/\.[^/.]+$/, '')}_datos.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
   const fecha = new Date(doc.createdAt).toLocaleDateString('es-ES', {
     year: 'numeric', month: 'short', day: 'numeric',
   })
@@ -172,14 +185,23 @@ function DocumentoRow({
 
       <div className="flex gap-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
         {romaneoRows && romaneoRows.length > 0 && (
-          <Button
-            size="sm" variant="ghost"
-            onClick={(e) => { e.stopPropagation(); setExpanded(!expanded) }}
-            title="Ver datos extraídos"
-          >
-            <TableIcon className="w-4 h-4 text-blue-500" />
-            {expanded ? <ChevronUp className="w-3 h-3 text-blue-500" /> : <ChevronDown className="w-3 h-3 text-blue-500" />}
-          </Button>
+          <>
+            <Button
+              size="sm" variant="ghost"
+              onClick={(e) => { e.stopPropagation(); setExpanded(!expanded) }}
+              title="Ver datos extraídos"
+            >
+              <TableIcon className="w-4 h-4 text-blue-500" />
+              {expanded ? <ChevronUp className="w-3 h-3 text-blue-500" /> : <ChevronDown className="w-3 h-3 text-blue-500" />}
+            </Button>
+            <Button
+              size="sm" variant="ghost"
+              onClick={handleExportJson}
+              title="Exportar datos como JSON"
+            >
+              <FileJson className="w-4 h-4 text-emerald-500" />
+            </Button>
+          </>
         )}
         {canWrite && (
           <Button
