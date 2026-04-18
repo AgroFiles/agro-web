@@ -229,6 +229,8 @@ export function DocumentosPage() {
   const [tipoFiltro, setTipoFiltro] = useState('')
   const [rubroFiltro, setRubroFiltro] = useState('')
   const [establecimientoFiltro, setEstablecimientoFiltro] = useState('')
+  const [fechaDesde, setFechaDesde] = useState('')
+  const [fechaHasta, setFechaHasta] = useState('')
   const [vista, setVista] = useState<'lista' | 'historial'>('lista')
   const [pagina, setPagina] = useState(1)
   const POR_PAGINA = 20
@@ -247,7 +249,7 @@ export function DocumentosPage() {
     establecimientoNombre: d.establecimientoId ? estabMap[d.establecimientoId] : undefined,
   }))
 
-  const hayFiltros = !!(search || tipoFiltro || rubroFiltro || establecimientoFiltro)
+  const hayFiltros = !!(search || tipoFiltro || rubroFiltro || establecimientoFiltro || fechaDesde || fechaHasta)
 
   // Reset page when filters change
   const resetPagina = () => setPagina(1)
@@ -259,7 +261,10 @@ export function DocumentosPage() {
     const matchEstablecimiento = establecimientoFiltro
       ? doc.establecimientoId === Number(establecimientoFiltro)
       : true
-    return matchSearch && matchTipo && matchRubro && matchEstablecimiento
+    const docDate = new Date(doc.createdAt)
+    const matchDesde = fechaDesde ? docDate >= new Date(fechaDesde) : true
+    const matchHasta = fechaHasta ? docDate <= new Date(fechaHasta + 'T23:59:59') : true
+    return matchSearch && matchTipo && matchRubro && matchEstablecimiento && matchDesde && matchHasta
   })
 
   const sortedByDate = [...filtered].sort(
@@ -402,6 +407,35 @@ export function DocumentosPage() {
             </select>
           )}
         </div>
+
+        {/* Rango de fechas — solo en historial */}
+        {vista === 'historial' && (
+          <div className="flex items-center gap-2 flex-wrap">
+            <CalendarDays className="w-4 h-4 text-gray-400 flex-shrink-0" />
+            <span className="text-xs text-gray-500">Desde</span>
+            <input
+              type="date"
+              value={fechaDesde}
+              onChange={(e) => { setFechaDesde(e.target.value); resetPagina() }}
+              className="rounded-md border border-input bg-background px-3 py-1.5 text-sm"
+            />
+            <span className="text-xs text-gray-500">hasta</span>
+            <input
+              type="date"
+              value={fechaHasta}
+              onChange={(e) => { setFechaHasta(e.target.value); resetPagina() }}
+              className="rounded-md border border-input bg-background px-3 py-1.5 text-sm"
+            />
+            {(fechaDesde || fechaHasta) && (
+              <button
+                onClick={() => { setFechaDesde(''); setFechaHasta(''); resetPagina() }}
+                className="text-xs text-gray-400 hover:text-gray-600 flex items-center gap-0.5"
+              >
+                <X className="w-3 h-3" /> limpiar
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Rubro pills */}
         {rubrosDisponibles.length > 0 && (
