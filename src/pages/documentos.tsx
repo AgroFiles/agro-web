@@ -14,7 +14,7 @@ import { useRubros } from '@/hooks/use-rubros'
 import { useAuthStore } from '@/store/auth-store'
 import { formatFileSize, getThumbnailUrl, isImageFile, generateShareLink } from '@/lib/file-api'
 import { TIPOS_DOCUMENTO_LABELS } from '@/types/documento'
-import type { DocumentoMetadata, RomaneoRow } from '@/types/documento'
+import type { DocumentoMetadata } from '@/types/documento'
 import {
   FileText,
   Upload,
@@ -33,8 +33,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Link2,
-  ChevronDown,
-  ChevronUp,
   TableIcon,
   FileJson,
 } from 'lucide-react'
@@ -89,7 +87,7 @@ function DocumentoRow({
   })
   const estabNombre = doc.establecimientoNombre
   const version = doc.versionNumero ?? 1
-  const romaneoRows = doc.datosExtraidos?.data
+  const hasDatosExtraidos = doc.datosExtraidos != null && doc.datosExtraidos.status === 200 && doc.datosExtraidos.data != null
 
   return (
     <div className="rounded-lg px-2 -mx-2 hover:bg-gray-50">
@@ -154,7 +152,7 @@ function DocumentoRow({
       </div>
 
       <div className="flex gap-1 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-        {romaneoRows && romaneoRows.length > 0 && (
+        {hasDatosExtraidos && (
           <>
             <Button
               size="sm" variant="ghost"
