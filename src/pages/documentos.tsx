@@ -53,23 +53,27 @@ function RomaneoTable({ rows }: { rows: RomaneoRow[] }) {
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b border-blue-100 text-blue-700">
-            <th className="px-3 py-2 text-left font-medium">ID</th>
+            <th className="px-3 py-2 text-left font-medium">Garrón</th>
+            <th className="px-3 py-2 text-left font-medium">Clasif.</th>
             <th className="px-3 py-2 text-left font-medium">Tipo</th>
-            <th className="px-3 py-2 text-right font-medium">Cant.</th>
-            <th className="px-3 py-2 text-left font-medium">Cat.</th>
-            <th className="px-3 py-2 text-left font-medium">Subtipo</th>
-            <th className="px-3 py-2 text-right font-medium">Peso (kg)</th>
+            <th className="px-3 py-2 text-left font-medium">Destino</th>
+            <th className="px-3 py-2 text-right font-medium">Dientes</th>
+            <th className="px-3 py-2 text-right font-medium">Peso MR1</th>
+            <th className="px-3 py-2 text-right font-medium">Peso MR2</th>
+            <th className="px-3 py-2 text-right font-medium">Decomiso</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((row, i) => (
             <tr key={i} className="border-b border-blue-100/50 last:border-0 hover:bg-blue-100/30">
-              <td className="px-3 py-1.5 text-gray-700">{row.id}</td>
-              <td className="px-3 py-1.5 text-gray-700">{row.type}</td>
-              <td className="px-3 py-1.5 text-right text-gray-700">{row.quantity}</td>
-              <td className="px-3 py-1.5 text-gray-700">{row.category}</td>
-              <td className="px-3 py-1.5 text-gray-700">{row.subtype}</td>
-              <td className="px-3 py-1.5 text-right font-medium text-gray-800">{row.weight}</td>
+              <td className="px-3 py-1.5 text-gray-700">{row.garron_id}</td>
+              <td className="px-3 py-1.5 text-gray-700">{row.clasificacion}</td>
+              <td className="px-3 py-1.5 text-gray-700">{row.tipo}</td>
+              <td className="px-3 py-1.5 text-gray-700">{row.destino}</td>
+              <td className="px-3 py-1.5 text-right text-gray-700">{row.dientes}</td>
+              <td className="px-3 py-1.5 text-right font-medium text-gray-800">{row.peso_mr_1 ?? '-'}</td>
+              <td className="px-3 py-1.5 text-right font-medium text-gray-800">{row.peso_mr_2 ?? '-'}</td>
+              <td className="px-3 py-1.5 text-right text-gray-700">{row.decomiso}</td>
             </tr>
           ))}
         </tbody>

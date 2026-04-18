@@ -25,15 +25,16 @@ export interface DocumentoMetadata {
 }
 
 export interface RomaneoRow {
-  id: string
-  type: string
-  quantity: number
-  category: string
-  grade: number
-  subtype: string
-  code1: string
-  code2: string
-  weight: number
+  garron_id: number
+  clasificacion: string
+  tipo: string
+  destino: string
+  dientes: number
+  peso_mr_1: number | null
+  peso_mr_2: number | null
+  decomiso: number
+  contusion_mr_1: string
+  contusion_mr_2: string
 }
 
 export interface RomaneoExtraccion {
