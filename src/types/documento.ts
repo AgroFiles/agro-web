@@ -21,7 +21,7 @@ export interface DocumentoMetadata {
   versionNumero?: number
   documentoRaizId?: number
   ownerRazonSocial?: string
-  datosExtraidos?: RomaneoExtraccion | null
+  datosExtraidos?: RomaneoExtraccion | FacturaExtraccion | null
 }
 
 export interface RomaneoRow {
@@ -40,6 +40,18 @@ export interface RomaneoRow {
 export interface RomaneoExtraccion {
   status: number
   data: RomaneoRow[]
+}
+
+export interface FacturaDatos {
+  importeTotal: number | null
+  CAE: string | null
+  fechaVencimientoCAE: string | null
+  cuitReceptor: string | null
+}
+
+export interface FacturaExtraccion {
+  status: number
+  data: FacturaDatos
 }
 
 export const TIPOS_DOCUMENTO = [
