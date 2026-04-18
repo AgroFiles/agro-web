@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AppLayout } from '@/components/app-layout'
 import { FileUploadDialog } from '@/components/file-upload-dialog'
 import { PermisosDocumentoDialog } from '@/components/permisos-documento-dialog'
@@ -231,12 +231,19 @@ export function DocumentosPage() {
   const [establecimientoFiltro, setEstablecimientoFiltro] = useState('')
   const [fechaDesde, setFechaDesde] = useState('')
   const [fechaHasta, setFechaHasta] = useState('')
+  const [searchContenido, setSearchContenido] = useState('')
+  const [searchContenidoDebounced, setSearchContenidoDebounced] = useState('')
   const [vista, setVista] = useState<'lista' | 'historial'>('lista')
+
+  useEffect(() => {
+    const t = setTimeout(() => setSearchContenidoDebounced(searchContenido), 400)
+    return () => clearTimeout(t)
+  }, [searchContenido])
   const [pagina, setPagina] = useState(1)
   const POR_PAGINA = 20
 
   const { user } = useAuthStore()
-  const { data: documentos = [], isLoading, error } = useFiles()
+  const { data: documentos = [], isLoading, error } = useFiles(searchContenidoDebounced || undefined)
   const { data: establecimientos = [] } = useEstablecimientos()
   const { data: rubros = [] } = useRubros()
   const deleteMutation = useDeleteFile()
@@ -365,7 +372,7 @@ export function DocumentosPage() {
       {/* Filters */}
       <div className="space-y-3 mb-6">
         <div className="flex gap-3 flex-wrap">
-          {/* Search */}
+          {/* Search por nombre */}
           <div className="relative flex-1 min-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
@@ -373,6 +380,17 @@ export function DocumentosPage() {
               className="pl-9"
               value={search}
               onChange={(e) => { setSearch(e.target.value); resetPagina() }}
+            />
+          </div>
+
+          {/* Search en contenido extraído */}
+          <div className="relative flex-1 min-w-[200px]">
+            <TableIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Buscar en datos extraídos..."
+              className="pl-9"
+              value={searchContenido}
+              onChange={(e) => { setSearchContenido(e.target.value); resetPagina() }}
             />
           </div>
 

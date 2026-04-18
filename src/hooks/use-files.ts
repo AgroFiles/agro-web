@@ -5,14 +5,14 @@ import type { DocumentoUploadOptions, DocumentoDownloadOptions } from '../types/
 
 export const fileKeys = {
   all: ['documentos'] as const,
-  list: () => [...fileKeys.all, 'list'] as const,
+  list: (q?: string) => [...fileKeys.all, 'list', q ?? ''] as const,
   detail: (id: number) => [...fileKeys.all, 'detail', id] as const,
 }
 
-export function useFiles() {
+export function useFiles(q?: string) {
   return useQuery({
-    queryKey: fileKeys.list(),
-    queryFn: fileApi.listFiles,
+    queryKey: fileKeys.list(q),
+    queryFn: () => fileApi.listFiles(q),
   })
 }
 
@@ -29,7 +29,7 @@ export function useUploadFile() {
   return useMutation({
     mutationFn: (options: DocumentoUploadOptions) => fileApi.uploadFile(options),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fileKeys.list() })
+      queryClient.invalidateQueries({ queryKey: fileKeys.all })
       toast.success('Documento subido correctamente')
     },
     onError: (error: any) => {
@@ -55,7 +55,7 @@ export function useDeleteFile() {
   return useMutation({
     mutationFn: (id: number) => fileApi.deleteFile(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: fileKeys.list() })
+      queryClient.invalidateQueries({ queryKey: fileKeys.all })
       toast.success('Documento eliminado')
     },
     onError: (error: any) => {

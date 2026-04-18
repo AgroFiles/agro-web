@@ -83,8 +83,10 @@ export async function uploadFileParaCliente({
   return response.data
 }
 
-export async function listFiles(): Promise<DocumentoMetadata[]> {
-  const response = await apiClient.get<DocumentoMetadata[]>('/api/v1/documentos')
+export async function listFiles(q?: string): Promise<DocumentoMetadata[]> {
+  const response = await apiClient.get<DocumentoMetadata[]>('/api/v1/documentos', {
+    params: q ? { q } : undefined,
+  })
   return response.data
 }
 
