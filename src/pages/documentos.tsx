@@ -4,6 +4,7 @@ import { FileUploadDialog } from '@/components/file-upload-dialog'
 import { PermisosDocumentoDialog } from '@/components/permisos-documento-dialog'
 import { VersionesDialog } from '@/components/versiones-dialog'
 import { DocumentoViewer } from '@/components/documento-viewer'
+import { DatosExtraídosModal } from '@/components/datos-extraidos-modal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -46,42 +47,6 @@ const SCAN_STATUS_LABELS: Record<string, { label: string; color: string }> = {
   SKIPPED:  { label: 'Omitido',   color: 'text-gray-600 bg-gray-50'    },
 }
 
-// ── Romaneo data table ────────────────────────────────────────────────────────
-function RomaneoTable({ rows }: { rows: RomaneoRow[] }) {
-  return (
-    <div className="mt-2 mb-1 overflow-x-auto rounded-lg border border-blue-100 bg-blue-50/50">
-      <table className="w-full text-xs">
-        <thead>
-          <tr className="border-b border-blue-100 text-blue-700">
-            <th className="px-3 py-2 text-left font-medium">Garrón</th>
-            <th className="px-3 py-2 text-left font-medium">Clasif.</th>
-            <th className="px-3 py-2 text-left font-medium">Tipo</th>
-            <th className="px-3 py-2 text-left font-medium">Destino</th>
-            <th className="px-3 py-2 text-right font-medium">Dientes</th>
-            <th className="px-3 py-2 text-right font-medium">Peso MR1</th>
-            <th className="px-3 py-2 text-right font-medium">Peso MR2</th>
-            <th className="px-3 py-2 text-right font-medium">Decomiso</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr key={i} className="border-b border-blue-100/50 last:border-0 hover:bg-blue-100/30">
-              <td className="px-3 py-1.5 text-gray-700">{row.garron_id}</td>
-              <td className="px-3 py-1.5 text-gray-700">{row.clasificacion}</td>
-              <td className="px-3 py-1.5 text-gray-700">{row.tipo}</td>
-              <td className="px-3 py-1.5 text-gray-700">{row.destino}</td>
-              <td className="px-3 py-1.5 text-right text-gray-700">{row.dientes}</td>
-              <td className="px-3 py-1.5 text-right font-medium text-gray-800">{row.peso_mr_1 ?? '-'}</td>
-              <td className="px-3 py-1.5 text-right font-medium text-gray-800">{row.peso_mr_2 ?? '-'}</td>
-              <td className="px-3 py-1.5 text-right text-gray-700">{row.decomiso}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  )
-}
-
 // ── Single document row (shared between list and history views) ───────────────
 function DocumentoRow({
   doc,
@@ -91,6 +56,7 @@ function DocumentoRow({
   onVersiones,
   onShare,
   onView,
+  onVerDatos,
   isOwner,
   canWrite,
 }: {
@@ -101,10 +67,10 @@ function DocumentoRow({
   onVersiones: (id: number, name: string) => void
   onShare: (id: number) => void
   onView: (id: number, name: string) => void
+  onVerDatos: (doc: DocumentoMetadata) => void
   isOwner: boolean
   canWrite: boolean
 }) {
-  const [expanded, setExpanded] = useState(false)
   const scan = SCAN_STATUS_LABELS[doc.scanStatus]
 
   const handleExportJson = (e: React.MouseEvent) => {
@@ -192,11 +158,10 @@ function DocumentoRow({
           <>
             <Button
               size="sm" variant="ghost"
-              onClick={(e) => { e.stopPropagation(); setExpanded(!expanded) }}
+              onClick={(e) => { e.stopPropagation(); onVerDatos(doc) }}
               title="Ver datos extraídos"
             >
               <TableIcon className="w-4 h-4 text-blue-500" />
-              {expanded ? <ChevronUp className="w-3 h-3 text-blue-500" /> : <ChevronDown className="w-3 h-3 text-blue-500" />}
             </Button>
             <Button
               size="sm" variant="ghost"
@@ -248,9 +213,6 @@ function DocumentoRow({
         </Button>
       </div>
     </div>
-    {expanded && romaneoRows && romaneoRows.length > 0 && (
-      <RomaneoTable rows={romaneoRows} />
-    )}
     </div>
   )
 }
@@ -262,6 +224,7 @@ export function DocumentosPage() {
   const [permisosFileName, setPermisosFileName] = useState('')
   const [versionesDoc, setVersionesDoc] = useState<{ id: number; name: string } | null>(null)
   const [viewerDoc, setViewerDoc] = useState<{ id: number; name: string } | null>(null)
+  const [datosDoc, setDatosDoc] = useState<DocumentoMetadata | null>(null)
   const [search, setSearch] = useState('')
   const [tipoFiltro, setTipoFiltro] = useState('')
   const [rubroFiltro, setRubroFiltro] = useState('')
@@ -350,6 +313,7 @@ export function DocumentosPage() {
       onDownload: handleDownload,
       onVersiones: (id: number, name: string) => setVersionesDoc({ id, name }),
       onView: (id: number, name: string) => setViewerDoc({ id, name }),
+      onVerDatos: (doc: DocumentoMetadata) => setDatosDoc(doc),
       onShare: handleShare,
       isOwner,
       canWrite: isOwner,
@@ -616,6 +580,13 @@ export function DocumentosPage() {
           documentoId={viewerDoc.id}
           fileName={viewerDoc.name}
           onClose={() => setViewerDoc(null)}
+        />
+      )}
+
+      {datosDoc && (
+        <DatosExtraídosModal
+          doc={datosDoc}
+          onClose={() => setDatosDoc(null)}
         />
       )}
     </AppLayout>
