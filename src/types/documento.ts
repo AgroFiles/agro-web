@@ -46,6 +46,7 @@ export interface FacturaDatos {
   importeTotal: number | null
   CAE: string | null
   fechaVencimientoCAE: string | null
+  cuitEmisor: string | null
   cuitReceptor: string | null
 }
 

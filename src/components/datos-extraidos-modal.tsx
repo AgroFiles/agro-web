@@ -50,13 +50,17 @@ function FacturaCard({ datos }: { datos: FacturaDatos }) {
 
   return (
     <div className="p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 sm:col-span-2">
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">Importe total</p>
         <p className="text-2xl font-bold text-gray-900">{fmt(datos.importeTotal)}</p>
       </div>
       <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+        <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">CUIT emisor</p>
+        <p className="text-base font-mono text-gray-900">{datos.cuitEmisor ?? '—'}</p>
+      </div>
+      <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">CUIT receptor</p>
-        <p className="text-lg font-semibold text-gray-900">{datos.cuitReceptor ?? '—'}</p>
+        <p className="text-base font-mono text-gray-900">{datos.cuitReceptor ?? '—'}</p>
       </div>
       <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
         <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">CAE</p>
