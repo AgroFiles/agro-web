@@ -22,7 +22,7 @@ export function useUploadNuevaVersion(documentoId: number, onSuccess: () => void
     setProgress(0)
     try {
       await uploadNewVersion(documentoId, file, setProgress)
-      queryClient.invalidateQueries({ queryKey: ['files'] })
+      queryClient.invalidateQueries({ queryKey: ['documentos'] })
       queryClient.invalidateQueries({ queryKey: ['versiones', documentoId] })
       toast.success('Nueva versión subida correctamente')
       onSuccess()

@@ -126,7 +126,7 @@ export function FileUploadDialog({
       })
     )
 
-    queryClient.invalidateQueries({ queryKey: ['files'] })
+    queryClient.invalidateQueries({ queryKey: ['documentos'] })
     setUploading(false)
 
     const final = queue.filter((f) => f.status !== 'error')
